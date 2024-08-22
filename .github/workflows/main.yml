@@ -1,0 +1,44 @@
+name: Assignment
+on:
+ push:
+   paths:
+     -'**.js'
+jobs:
+  build:
+    name: my job
+    runs-on: ${{matrix.os}}
+    strategy:
+       matrix:
+         os: [macos-latest, windows-latest, ubuntu-latest]
+         node: [10,12,14]
+         include:
+            - node: 13
+              os: ubuntu-latest
+              experiment: true 
+         exclude:
+            - os: macos-latest
+              node: 12
+              experiment: true
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use node.js ${{matrix.node}}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{matrix.node}}
+      - run: npm ci
+    #  - run: npm install
+      - run: npm run build --if-present
+      - name: Printing success message
+        if: success()
+        run: echo "The build job is success"
+      - name: Printing failure message 
+        if: failure()
+        run: echo "The build is failed"
+  
+           
+
+          
+
+           
+         
+          
